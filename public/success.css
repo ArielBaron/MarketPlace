@@ -3,11 +3,13 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
+    direction: rtl; /* Set the direction to RTL */
 }
 
 .header {
     background-color: #f2f2f2;
     padding: 20px;
+    text-align: right; /* Align text to the right */
 }
 
 .header h1 {
@@ -15,11 +17,12 @@ body {
 }
 
 .content {
-    padding: 20px
+    padding: 20px;
+    text-align: right; /* Align text to the right */
 }
 
 /* Xpost */
-#post {
+#newpost {
     visibility: hidden;
     margin-top: 20px;
 }
@@ -32,11 +35,12 @@ body {
     margin-bottom: 20px;
     background-color: #fff;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative;
 }
 
 .left-container {
     flex: 1;
-    margin-right: 20px;
+    margin-left: 20px; /* Swap margin-right with margin-left */
 }
 
 .right-container {
@@ -63,8 +67,48 @@ body {
 .post-image {
     width: 200px;
     height: 200px;
-    margin-right: 10px;
+    margin-left: 10px; /* Swap margin-right with margin-left */
     margin-bottom: 10px;
     object-fit: cover;
     border-radius: 5px;
+}
+
+.garbage-icon {
+    position: absolute;
+    top: 10px;
+    left: 10px; /* Swap right with left */
+    font-size: 20px;
+    color: #171414;
+    cursor: pointer;
+}
+
+.garbage-icon:hover {
+    color: #e80202;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    direction: rtl; /* Ensure buttons are in RTL direction */
+}
+
+.choice-btn {
+    margin: 20px;
+    padding: 10px 20px;
+    font-size: 50px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.choice-btn:hover {
+    background-color: #007BFF;
+    color: #fff;
+    transform: scale(1.05);
+}
+
+.choice-btn:active {
+    transform: scale(0.95);
 }

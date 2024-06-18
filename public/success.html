@@ -1,36 +1,51 @@
 <!-- public/success.html -->
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="rtl"> <!-- Add dir="rtl" -->
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Successful</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" href="success.css">
 </head>
-<body>
     <div class="header">
-        <h1>Login Successful</h1>
-        <p>Welcome, <span id="username"></span>!</p>
+        <h1>הכניסה הושלמה</h1>
+        <p> <span id="username"></span>, שלום</p>
     </div>
-    <div class="content">
-        <h2>Add a New Post</h2>
-        <form id="postForm">
-            <input type="text" id="postTitle" placeholder="Title">
-            <select id="postCategory">
-                <option value="toys">Toys</option>
-                <option value="books">Books</option>
-                <option value="equipment">Equipment</option>
-                <option value="other">Other</option>
-            </select>
-            <input type="text" id="postPrice" placeholder="Price">
-            <input type="text" id="postContact" placeholder="Phone number/email/social media">
-            <input type="file" id="postImages" multiple>
-            <button type="submit">Save/Update post</button>
-        </form>
-        <button onclick="ShowPostbtn()">See Post</button>
+    <div class="button-container" id="select-screen">
+        <button onclick="move_to_public_posts()" class="choice-btn">ראה פוסטים פומבים</button>
+        <button onclick="move_to_own_posts()" class="choice-btn">ראה את הפוסטים שלך</button>
     </div>
-    <div id="post"></div>
-    <h1 id="message"></h1>
+    <div id="public-posts-div" style="display: none;">
+        <button class="choice-btn" onclick="Back('public-posts-div')">חזרה לבחירה</button>
+        <h1>פוסטים פומבים</h1>
+        <div id="public-posts"></div>
+
+    </div>
+    <div id="my-posts-div" style="display: none;">
+        <button class="choice-btn" onclick="Back('my-posts-div')">חזרה לבחירה</button>
+
+        <div class="content">
+            <h2>הוסף פוסט</h2>
+            <form id="postForm">
+                <input type="text" id="postTitle" placeholder="כותרת">
+                <select id="postCategory">
+                    <option value="toys">צעצועים</option>
+                    <option value="books">ספרים</option>
+                    <option value="equipment">ציוד</option>
+                    <option value="other">אחר</option>
+                </select>
+                <input type="number" id="postPrice" placeholder="מחיר (בשקלים)">
+                <input type="text" id="postContact" placeholder="מספר טלפון / מייל">
+                <input type="file" id="postImages" multiple>
+                <button type="submit">להוסיף/לעדכן פוסט</button>
+            </form>
+            <button onclick="ShowPostbtn('preview')">ראה פוסט</button>
+        </div>
+        <div id="newpost"></div>
+        <h1>הפוסטים שלי</h1>
+        <div id="your-posts"></div>
+    </div>
     <script src="success.js"></script>
 </body>
 </html>

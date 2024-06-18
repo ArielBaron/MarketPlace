@@ -1,0 +1,12 @@
+# .gitignore
+
+# Node.js dependencies
+/node_modules
+
+# Environment variables
+.env
+
+# Other files and directories to ignore
+/dist
+.DS_Store
+npm-debug.log

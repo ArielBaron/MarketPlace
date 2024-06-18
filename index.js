@@ -1,15 +1,15 @@
-//index.js
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt');
 const session = require('express-session');
-
+require('dotenv').config();
 const app = express();
 const port = 3000;
 
 // Middleware
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: '30mb' })); // Increase limit as needed
+app.use(bodyParser.urlencoded({ limit: '30mb', extended: true }));
 app.use(express.static('public')); // To serve static files like HTML, CSS, JS
 app.use(session({
   secret: 'mySecretKey',
@@ -34,6 +34,7 @@ const registerSchema = new mongoose.Schema({
   username: String,
   email: String,
   password: String,
+  secret_password: String,
 });
 const Register = mongoose.model('Register', registerSchema, 'registers'); // Specify the collection name 'registers'
 
@@ -43,13 +44,18 @@ app.post('/api/register', async (req, res) => {
     // Check if the username already exists
     const existingUser = await Register.findOne({ username: req.body.username });
     const existingUserEmail = await Register.findOne({ email: req.body.email });
+    const secret_password = req.body.secret_password;
+    if (secret_password !== process.env.SECRET_PASSWORD) {
+      return res.status(400).json({ message: "Invalid secret password" });
+    }
     if (existingUser) {
       return res.status(400).json({ message: "Username already exists" });
     }
     if (existingUserEmail) {
-      return res.status(400).json({message:"Email already exists"})
+      return res.status(400).
+json({message:"Email already exists"});
     }
-  
+    // Hash the password
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
     const newUser = new Register({
       username: req.body.username,
@@ -100,7 +106,6 @@ app.get('/api/user', (req, res) => {
   }
 });
 
-
 // Define schema and model for posts
 const postSchema = new mongoose.Schema({
   owner: String,
@@ -108,7 +113,7 @@ const postSchema = new mongoose.Schema({
   category: { type: String, enum: ['toys', 'books', 'equipment', 'other'] },
   price: String, // Changed the type to String to allow any format
   contact: String,
-  images: [String]
+  images: [String], // Change type to an array of strings
 });
 
 const Post = mongoose.model('Post', postSchema, 'posts');
@@ -124,6 +129,59 @@ app.post('/api/posts', async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 });
+app.get('/api/posts/all', async (req, res) => {
+  try {
+    const posts = await Post.find();
+    res.status(200).json(posts);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+})
+app.get('/api/posts/:id', async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+    if (post) {
+      res.status(200).json(post);
+    } else {
+      res.status(404).json({ message: "Post not found" });
+    }
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+})
+
+// Route for fetching posts by owner
+app.get('/api/posts', async (req, res) => {
+  if (req.session.authenticated && req.session.username) {
+    try {
+      const posts = await Post.find({ owner: req.session.username });
+      res.status(200).json(posts);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  } else {
+    res.status(401).json({ message: "Unauthorized" });
+  }
+});
+
+// Route for deleting a post
+app.delete('/api/posts/:id', async (req, res) => { // Corrected the route definition
+  if (req.session.authenticated && req.session.username) {
+    try {
+      const deletedPost = await Post.findOneAndDelete({ _id: req.params.id, owner: req.session.username });
+      if (deletedPost) {
+        res.status(200).json({ message: "Post deleted successfully" });
+      } else {
+        res.status(404).json({ message: "Post not found" });
+      }
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  } else {
+    res.status(401).json({ message: "Unauthorized" });
+  }
+});
+
 
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
